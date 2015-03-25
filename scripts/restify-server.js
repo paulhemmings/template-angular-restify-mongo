@@ -1,6 +1,5 @@
 var restify = require('restify')
-    db = require( __dirname + '/database/database'),
-    itemService = require( __dirname + '/services/item-service');
+    fs = require('fs');
 
 // instantiate the server
 // http://mcavage.me/node-restify/#Bundled-Plugins
@@ -23,25 +22,26 @@ server.get("/", restify.serveStatic({
   default: 'index.html'
 }));
 
-// example of using a service to retrieve data from MongoDB
+// bootstrap database and models
 
-server.get('/items/:id', function(req, res, next) {
-  itemService.get(id).then(function(data) {
-    res.send(data);
-    next();
-  });
+require( __dirname + '/database/database');
 
+// bootstrap services
+
+var models_path = __dirname + '/services';
+var services = {};
+fs.readdirSync(models_path).forEach(function(file) {
+	console.log('load resource ' + file);
+    services[file] = require(models_path + '/' + file);
 });
 
-server.get('/items', function(req, res, next) {
-  itemService.all().then(function(data) {
-    console.log(JSON.stringify(data));
-    if (data.success && data.content.length == 0) {
-        itemService.persist({ name: 'test-data', content: 'test-content' });
-    }
-    res.send(data);
-    next();
-  });
+// bootstrap resources
+
+var models_path = __dirname + '/resources';
+fs.readdirSync(models_path).forEach(function(file) {
+	console.log('load resource ' + file);
+    var resource = require(models_path + '/' + file);
+    resource.initialize(server, services);
 });
 
 
