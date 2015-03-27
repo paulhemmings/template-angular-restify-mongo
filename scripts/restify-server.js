@@ -32,7 +32,8 @@ var models_path = __dirname + '/services';
 var services = {};
 fs.readdirSync(models_path).forEach(function(file) {
 	console.log('load resource ' + file);
-    services[file] = require(models_path + '/' + file);
+    var service = require(models_path + '/' + file);
+    services[service.name] = service;
 });
 
 // bootstrap resources

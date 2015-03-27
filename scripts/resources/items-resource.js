@@ -3,9 +3,11 @@
 
 exports.initialize = function(server, services) {
 
-  var itemService = services["item-service.js"];
+  // grab the services we need
 
-  // get a single item
+  var itemService = services["ItemService"];
+
+  // route:: get a single item
 
   server.get('/items/:id', function(req, res, next) {
     itemService.get(id).then(function(data) {
@@ -15,7 +17,8 @@ exports.initialize = function(server, services) {
 
   });
 
-  // get all items
+  // route:: get all items
+
   server.get('/items', function(req, res, next) {
     itemService.all().then(function(data) {
       console.log(JSON.stringify(data));

@@ -2,6 +2,8 @@ var Mongoose = require('mongoose'),
     Item = Mongoose.model('Item'),
     Promise = require("node-promise").Promise;
 
+exports.name = "ItemService";    
+
 exports.all = function() {
   var promise = new Promise();
 	Item.find(function(err, items) {
